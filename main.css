@@ -4,6 +4,9 @@
   width: 100%
 }
 
+.marketplace{
+  display: none;
+}
 Button{
   backround-color: grey;
   font-size: 10px'
