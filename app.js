@@ -13,7 +13,7 @@ $(document).ready(function(){
   });
 
   function changeinventory(){
-    $("#hqmoney").html("Money: $", ("hqmoney");
+    $("#hqmoney").html("Money: $", hqmoney;
     if(hqforks == 1){
       $("#hqforks").html("You now own " + hqforks + "fork.");
     }else{
