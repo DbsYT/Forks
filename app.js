@@ -15,9 +15,9 @@ $(document).ready(function(){
   function changeinventory(){
     $("#hqmoney").html("Money: $0", hqmoney);
     if(hqforks == 1){
-      $("#hqforks").html("You now own " + hqForks + "fork.");
+      $("#hqforks").html("You now own " + hqforks + "fork.");
     }else{
-       $("#hqforks").html("You now own " + hqForks + "forks.");
+       $("#hqforks").html("You now own " + hqforks + "forks.");
     }
   }
 });
