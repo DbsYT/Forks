@@ -7,17 +7,17 @@ $(document).ready(function(){
   var hqforkPrice = 1;
   var menu;
   $("#forks").click(function(){
-    hqforks += hqforksPlus;
+    var hqforks += var hqforksPlus;
     changeinventory();
     changemarket();
   });
 
   function changeinventory(){
-    $("#hqmoney").html("Money: $", hqmoney;
-    if(hqforks == 1){
-      $("#hqforks").html("You now own " + hqforks + "fork.");
+    $("#hqmoney").html("Money: $", var hqmoney;
+    if(var forks == 1){
+      $("#hqforks").html("You now own " + var hqforks + "fork.");
     }else{
-       $("#hqforks").html("You now own " + hqforks + "forks.");
+       $("#hqforks").html("You now own " + var hqforks + "forks.");
     }
   }
 });
