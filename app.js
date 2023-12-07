@@ -31,28 +31,27 @@ $(document).ready(function(){
       }
   }
 
-  function changemarket(){
-    if(hqforks > 0){
-    $("#sellAll").css("display", "block");
-    }else{
-      $("#sellAll").css("display", "none");
-    }
-    if(hqforks >= 1){
-      $("#sell1").css("display", "block");
-    }else{
-      $("#sell1").css("display", "none");
-    }
-    if(hqforks >= 10){
-      $("#sell10").css("display", "block");
-    }else{
-      $("#sell10").css("display", "none");
-    }
-    if(hqforks > 100){
-      $("#sell100").css("display", "block");
-    }else{
-      $("#sell100").css("display", "none");
-    }
-
+    function changemarket(){
+        if(hqforks > 0){
+            $("#sellAll").css("display", "block");
+        }else{
+            $("#sellAll").css("display", "none");
+        }
+        if(hqforks >= 1){
+            $("#sell1").css("display", "block");
+        }else{
+            $("#sell1").css("display", "none");
+        }
+        if(hqforks >= 10){
+            $("#sell10").css("display", "block");
+        }else{
+            $("#sell10").css("display", "none");
+        }
+         if(hqforks >= 100){
+            $("#sell100").css("display", "block");
+        }else{
+            $("#sell100").css("display", "none");
+        }
   }
 
     function switchMenu(menu){
