@@ -14,12 +14,12 @@ $(document).ready(function(){
     });
 
     $("#visit").click(function(){
-      menu = switchmenu("marketplace");
-      changemarket();
+        menu = switchMenu("marketplace");
+        changeMarket();
     });
 
     $("#return").click(function(){
-       menu = switchmenu("main");
+       menu = switchMenu("main");
     });
   
   function changeinventory(){
