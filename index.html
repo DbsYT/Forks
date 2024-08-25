@@ -10,7 +10,7 @@
             text-align: center;
             background-color: #f0f0f0;
         }
-        #clickButton, .upgradeButton {
+        #clickButton, .upgradeButton, #resetButton {
             padding: 15px 30px;
             font-size: 18px;
             margin: 20px;
@@ -22,6 +22,10 @@
         }
         .upgradeButton {
             background-color: #008CBA;
+            color: white;
+        }
+        #resetButton {
+            background-color: #f44336;
             color: white;
         }
         #stats {
@@ -45,6 +49,9 @@
 
     <button class="upgradeButton" id="upgradeClickButton">Upgrade Click (Cost: 10)</button>
     <button class="upgradeButton" id="autoClickerButton">Buy Auto Clicker (Cost: 50)</button>
+    <button class="upgradeButton" id="doubleClickButton">Double Click Power (Cost: 200)</button>
+    <button class="upgradeButton" id="clickMultiplierButton">Click Multiplier x2 (Cost: 500)</button>
+    <button id="resetButton">Reset Game</button>
 
     <div id="achievements">
         <h2>Achievements</h2>
@@ -57,7 +64,10 @@
         let cps = 0; // Clicks per second
         let upgradeCost = 10;
         let autoClickerCost = 50;
+        let doubleClickCost = 200;
+        let clickMultiplierCost = 500;
         let autoClickers = 0;
+        let clickMultiplier = 1;
         let achievements = [];
 
         const clickButton = document.getElementById("clickButton");
@@ -66,12 +76,19 @@
         const cpsDisplay = document.getElementById("cps");
         const upgradeClickButton = document.getElementById("upgradeClickButton");
         const autoClickerButton = document.getElementById("autoClickerButton");
+        const doubleClickButton = document.getElementById("doubleClickButton");
+        const clickMultiplierButton = document.getElementById("clickMultiplierButton");
+        const resetButton = document.getElementById("resetButton");
         const achievementsList = document.getElementById("achievementsList");
 
+        // Load saved game data
+        loadGame();
+
         clickButton.addEventListener("click", () => {
-            clicks += clickValue;
+            clicks += clickValue * clickMultiplier;
             updateStats();
             checkAchievements();
+            saveGame();
         });
 
         upgradeClickButton.addEventListener("click", () => {
@@ -81,6 +98,7 @@
                 upgradeCost = Math.floor(upgradeCost * 1.5);
                 upgradeClickButton.textContent = `Upgrade Click (Cost: ${upgradeCost})`;
                 updateStats();
+                saveGame();
             }
         });
 
@@ -91,6 +109,35 @@
                 autoClickerCost = Math.floor(autoClickerCost * 1.5);
                 autoClickerButton.textContent = `Buy Auto Clicker (Cost: ${autoClickerCost})`;
                 updateStats();
+                saveGame();
+            }
+        });
+
+        doubleClickButton.addEventListener("click", () => {
+            if (clicks >= doubleClickCost) {
+                clicks -= doubleClickCost;
+                clickValue *= 2;
+                doubleClickCost = Math.floor(doubleClickCost * 2);
+                doubleClickButton.textContent = `Double Click Power (Cost: ${doubleClickCost})`;
+                updateStats();
+                saveGame();
+            }
+        });
+
+        clickMultiplierButton.addEventListener("click", () => {
+            if (clicks >= clickMultiplierCost) {
+                clicks -= clickMultiplierCost;
+                clickMultiplier *= 2;
+                clickMultiplierCost = Math.floor(clickMultiplierCost * 2.5);
+                clickMultiplierButton.textContent = `Click Multiplier x${clickMultiplier * 2} (Cost: ${clickMultiplierCost})`;
+                updateStats();
+                saveGame();
+            }
+        });
+
+        resetButton.addEventListener("click", () => {
+            if (confirm("Are you sure you want to reset your progress?")) {
+                resetGame();
             }
         });
 
@@ -98,6 +145,7 @@
             clicksDisplay.textContent = clicks;
             clickValueDisplay.textContent = clickValue;
             cpsDisplay.textContent = cps;
+            toggleUpgradeButtons();
         }
 
         function checkAchievements() {
@@ -105,28 +153,105 @@
             if (clicks >= 100 && !achievements.includes("First 100 Clicks")) {
                 newAchievements.push("First 100 Clicks");
             }
-            if (clickValue > 1 && !achievements.includes("First Upgrade")) {
-                newAchievements.push("First Upgrade");
+            if (clicks >= 1000 && !achievements.includes("First 1000 Clicks")) {
+                newAchievements.push("First 1000 Clicks");
             }
-            if (autoClickers > 0 && !achievements.includes("First Auto Clicker")) {
-                newAchievements.push("First Auto Clicker");
+            if (clickValue > 2 && !achievements.includes("First Double Click Power")) {
+                newAchievements.push("First Double Click Power");
+            }
+            if (clickMultiplier > 1 && !achievements.includes("First Click Multiplier")) {
+                newAchievements.push("First Click Multiplier");
+            }
+            if (autoClickers >= 10 && !achievements.includes("Own 10 Auto Clickers")) {
+                newAchievements.push("Own 10 Auto Clickers");
             }
 
             if (newAchievements.length > 0) {
                 achievements = achievements.concat(newAchievements);
                 achievementsList.textContent = achievements.join(", ");
+                saveGame();
             }
+        }
+
+        function toggleUpgradeButtons() {
+            upgradeClickButton.disabled = clicks < upgradeCost;
+            autoClickerButton.disabled = clicks < autoClickerCost;
+            doubleClickButton.disabled = clicks < doubleClickCost;
+            clickMultiplierButton.disabled = clicks < clickMultiplierCost;
         }
 
         setInterval(() => {
             if (autoClickers > 0) {
-                clicks += autoClickers;
-                cps = autoClickers;
+                clicks += autoClickers * clickMultiplier;
+                cps = autoClickers * clickMultiplier;
                 updateStats();
                 checkAchievements();
+                saveGame();
             }
         }, 1000);
+
+        function saveGame() {
+            const gameData = {
+                clicks: clicks,
+                clickValue: clickValue,
+                cps: cps,
+                upgradeCost: upgradeCost,
+                autoClickerCost: autoClickerCost,
+                doubleClickCost: doubleClickCost,
+                clickMultiplierCost: clickMultiplierCost,
+                autoClickers: autoClickers,
+                clickMultiplier: clickMultiplier,
+                achievements: achievements
+            };
+            localStorage.setItem('clickerGameSave', JSON.stringify(gameData));
+        }
+
+        function loadGame() {
+            const savedGame = localStorage.getItem('clickerGameSave');
+            if (savedGame) {
+                const gameData = JSON.parse(savedGame);
+                clicks = gameData.clicks;
+                clickValue = gameData.clickValue;
+                cps = gameData.cps;
+                upgradeCost = gameData.upgradeCost;
+                autoClickerCost = gameData.autoClickerCost;
+                doubleClickCost = gameData.doubleClickCost;
+                clickMultiplierCost = gameData.clickMultiplierCost;
+                autoClickers = gameData.autoClickers;
+                clickMultiplier = gameData.clickMultiplier;
+                achievements = gameData.achievements;
+
+                updateStats();
+                upgradeClickButton.textContent = `Upgrade Click (Cost: ${upgradeCost})`;
+                autoClickerButton.textContent = `Buy Auto Clicker (Cost: ${autoClickerCost})`;
+                doubleClickButton.textContent = `Double Click Power (Cost: ${doubleClickCost})`;
+                clickMultiplierButton.textContent = `Click Multiplier x${clickMultiplier * 2} (Cost: ${clickMultiplierCost})`;
+                achievementsList.textContent = achievements.length > 0 ? achievements.join(", ") : "None";
+            }
+        }
+
+        function resetGame() {
+            clicks = 0;
+            clickValue = 1;
+            cps = 0;
+            upgradeCost = 10;
+            autoClickerCost = 50;
+            doubleClickCost = 200;
+            clickMultiplierCost = 500;
+            autoClickers = 0;
+            clickMultiplier = 1;
+            achievements = [];
+
+            updateStats();
+            upgradeClickButton.textContent = `Upgrade Click (Cost: ${upgradeCost})`;
+            autoClickerButton.textContent = `Buy Auto Clicker (Cost: ${autoClickerCost})`;
+            doubleClickButton.textContent = `Double Click Power (Cost: ${doubleClickCost})`;
+            clickMultiplierButton.textContent = `Click Multiplier x2 (Cost: ${clickMultiplierCost})`;
+            achievementsList.textContent = "None";
+
+            localStorage.removeItem('clickerGameSave');
+        }
     </script>
-    
+
 </body>
 </html>
