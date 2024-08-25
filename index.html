@@ -1,38 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link
-      rel="icon"
-      href="https://i5.walmartimages.com/seo/Comfy-Package-Heavyweight-Plastic-Silverware-Heavy-Duty-Disposable-Cutlery-Set-360-Pack_8996d10d-b05c-47b0-890a-aca05c00d6c1.813385d4697028671f2080ee75b8f8be.jpeg?odnHeight=640&odnWidth=640&odnBg=FFFFFF"
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Clicker Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        #clickButton, .upgradeButton {
+            padding: 15px 30px;
+            font-size: 18px;
+            margin: 20px;
+            cursor: pointer;
+        }
+        #clickButton {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .upgradeButton {
+            background-color: #008CBA;
+            color: white;
+        }
+        #stats {
+            margin-top: 30px;
+        }
+        #achievements {
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
 
-    <title>fork-clicker</title>
+    <h1>Advanced Clicker Game</h1>
+    <button id="clickButton">Click Me!</button>
 
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/main.css" />
+    <div id="stats">
+        <p>Clicks: <span id="clicks">0</span></p>
+        <p>Clicks Per Click: <span id="clickValue">1</span></p>
+        <p>Clicks Per Second: <span id="cps">0</span></p>
+    </div>
 
-    <!-- import the webpage's javascript file -->
-    <script src="/script.js" defer></script>
-  </head>
-  <body>
-    <!-- this is the start of content -->
-    <h1>
-      <div class="content">
-        <div class="menus">
-          <button id="hqforks">GetForks!</button>
-          <button id="hqmarket">Go To Market!</button>
-        </div>
+    <button class="upgradeButton" id="upgradeClickButton">Upgrade Click (Cost: 10)</button>
+    <button class="upgradeButton" id="autoClickerButton">Buy Auto Clicker (Cost: 50)</button>
 
-        <div class="upgrades"></div>
+    <div id="achievements">
+        <h2>Achievements</h2>
+        <p id="achievementsList">None</p>
+    </div>
 
-        <div class="inventory">
-          <p id="hqmoney">Money: $0</p>
-          <p id="hqforks">Forks: 0</p>
-        </div>
-      </div>
-    </h1>
-  </body>
+    <script>
+        let clicks = 0;
+        let clickValue = 1;
+        let cps = 0; // Clicks per second
+        let upgradeCost = 10;
+        let autoClickerCost = 50;
+        let autoClickers = 0;
+        let achievements = [];
+
+        const clickButton = document.getElementById("clickButton");
+        const clicksDisplay = document.getElementById("clicks");
+        const clickValueDisplay = document.getElementById("clickValue");
+        const cpsDisplay = document.getElementById("cps");
+        const upgradeClickButton = document.getElementById("upgradeClickButton");
+        const autoClickerButton = document.getElementById("autoClickerButton");
+        const achievementsList = document.getElementById("achievementsList");
+
+        clickButton.addEventListener("click", () => {
+            clicks += clickValue;
+            updateStats();
+            checkAchievements();
+        });
+
+        upgradeClickButton.addEventListener("click", () => {
+            if (clicks >= upgradeCost) {
+                clicks -= upgradeCost;
+                clickValue++;
+                upgradeCost = Math.floor(upgradeCost * 1.5);
+                upgradeClickButton.textContent = `Upgrade Click (Cost: ${upgradeCost})`;
+                updateStats();
+            }
+        });
+
+        autoClickerButton.addEventListener("click", () => {
+            if (clicks >= autoClickerCost) {
+                clicks -= autoClickerCost;
+                autoClickers++;
+                autoClickerCost = Math.floor(autoClickerCost * 1.5);
+                autoClickerButton.textContent = `Buy Auto Clicker (Cost: ${autoClickerCost})`;
+                updateStats();
+            }
+        });
+
+        function updateStats() {
+            clicksDisplay.textContent = clicks;
+            clickValueDisplay.textContent = clickValue;
+            cpsDisplay.textContent = cps;
+        }
+
+        function checkAchievements() {
+            let newAchievements = [];
+            if (clicks >= 100 && !achievements.includes("First 100 Clicks")) {
+                newAchievements.push("First 100 Clicks");
+            }
+            if (clickValue > 1 && !achievements.includes("First Upgrade")) {
+                newAchievements.push("First Upgrade");
+            }
+            if (autoClickers > 0 && !achievements.includes("First Auto Clicker")) {
+                newAchievements.push("First Auto Clicker");
+            }
+
+            if (newAchievements.length > 0) {
+                achievements = achievements.concat(newAchievements);
+                achievementsList.textContent = achievements.join(", ");
+            }
+        }
+
+        setInterval(() => {
+            if (autoClickers > 0) {
+                clicks += autoClickers;
+                cps = autoClickers;
+                updateStats();
+                checkAchievements();
+            }
+        }, 1000);
+    </script>
+    
+</body>
 </html>
